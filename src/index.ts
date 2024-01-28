@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import { runDatabase } from "./db";
 
 const app = express();
 
@@ -15,3 +16,5 @@ const PORT = parseInt(process.env.PORT);
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
 });
+
+runDatabase().catch(console.dir);
