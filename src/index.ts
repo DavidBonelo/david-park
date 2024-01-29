@@ -1,8 +1,10 @@
 import "dotenv/config";
 import express from "express";
 import { runDatabase } from "./db";
+import router from "./routers";
 
 const app = express();
+app.use(express.json());
 
 app.get("/ping", (req, res) => {
   res.send("pong");
@@ -18,3 +20,5 @@ app.listen(PORT, () => {
 });
 
 runDatabase().catch(console.dir);
+
+app.use("/", router());
