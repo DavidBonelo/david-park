@@ -19,14 +19,6 @@ export const registerCustomer: RequestHandler = asyncHandler(
     if (customerData.identification === undefined) {
       throw new Error("Identification is required");
     }
-    // update Park visits
-    try {
-      park.addVisitor();
-    } catch (err) {
-      res.status(400).send((err as Error).message);
-      return;
-    }
-
     // find customer
     const existingCustomer = await customerService.getCustomerByIdentification(
       customerData.identification
@@ -36,13 +28,14 @@ export const registerCustomer: RequestHandler = asyncHandler(
       const updatedCustomer =
         await customerService.incrementCustomerVisits(existingCustomer);
       res.json(updatedCustomer);
-      return;
+    } else {
+      // create new customer
+      const newCustomer = await customerService.createCustomer(customerData);
+      console.log("Customer created", newCustomer);
+      res.json(newCustomer);
     }
-    // create new customer
-    const newCustomer = await customerService.createCustomer(customerData);
-    console.log("Customer created", newCustomer);
-
-    res.json(newCustomer);
+    // update Park visitors
+    park.addVisitor();
   }
 );
 

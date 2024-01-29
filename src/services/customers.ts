@@ -9,7 +9,12 @@ export const getCustomerByIdentification = async (
 
 export const createCustomer = async (
   values: Record<string, any>
-): Promise<Customer> => await CustomerModel.create(values);
+): Promise<Customer> => {
+  if (values.age < 18 && values.contact === undefined) {
+    throw new Error("Contact is required for minors");
+  }
+  return await CustomerModel.create(values);
+};
 
 export const deleteCustomerById = async (
   id: string
