@@ -1,6 +1,10 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
+import { Types } from "mongoose";
 
 export class Customer {
+  @prop({ default: Types.ObjectId })
+  _id!: Types.ObjectId;
+
   @prop({ required: true })
   name!: string;
 
