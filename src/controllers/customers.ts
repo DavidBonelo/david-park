@@ -2,7 +2,9 @@ import type express from "express";
 import { type RequestHandler } from "express";
 import { asyncHandler } from "../utils";
 import * as customerService from "../services/customers";
-import { type Customer } from "../models/customer";
+import { Park } from "../models/park";
+
+const park = Park.getInstance();
 
 export const getAllCustomers: RequestHandler = asyncHandler(
   async (_req: express.Request, res: express.Response) => {
@@ -16,6 +18,13 @@ export const registerCustomer: RequestHandler = asyncHandler(
     const customerData = req.body as Record<string, any>;
     if (customerData.identification === undefined) {
       throw new Error("Identification is required");
+    }
+    // update Park visits
+    try {
+      park.addVisitor();
+    } catch (err) {
+      res.status(400).send((err as Error).message);
+      return;
     }
 
     // find customer

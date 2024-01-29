@@ -39,6 +39,10 @@ export class Park {
   }
 
   addVisitor(): void {
+    if (this._visitors >= this.maxVisitors) {
+      throw new Error("Park is full");
+    }
+
     if (this.getRequiredStations() > this.getOpenStations()) {
       // call to open a new Station
     }
