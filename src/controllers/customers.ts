@@ -10,3 +10,16 @@ export const getAllCustomers: RequestHandler = asyncHandler(
   }
 );
 
+export const registerCustomer: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const customerData = req.body as Record<string, any>;
+    if (customerData.identification === undefined) {
+      throw new Error("Identification is required");
+    }
+    // create new customer
+    const newCustomer = await customerService.createCustomer(customerData);
+    console.log("Customer created", newCustomer);
+
+    res.json(newCustomer);
+  }
+);
