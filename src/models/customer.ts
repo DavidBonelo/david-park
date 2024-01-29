@@ -1,6 +1,10 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
+import { Types } from "mongoose";
 
 export class Customer {
+  @prop({ default: Types.ObjectId })
+  _id!: Types.ObjectId;
+
   @prop({ required: true })
   name!: string;
 
@@ -19,8 +23,8 @@ export class Customer {
   @prop()
   contact?: string;
 
-  @prop({ default: 0 })
-  visits: number = 0;
+  @prop({ default: 1 })
+  visits: number = 1;
 
   @prop({ default: 0 })
   credits: number = 0;
