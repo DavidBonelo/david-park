@@ -23,3 +23,18 @@ export const registerCustomer: RequestHandler = asyncHandler(
     res.json(newCustomer);
   }
 );
+
+export const deleteCustomer: RequestHandler = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  console.log("Deleting customer", id);
+  const deletedCustomer = await customerService.deleteCustomerById(id);
+
+  if (deletedCustomer === null) {
+    console.log(`Customer ${id} not found`);
+    res.status(404);
+    return;
+  }
+  console.log({ deletedCustomer });
+  res.json(deletedCustomer);
+});
