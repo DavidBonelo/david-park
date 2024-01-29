@@ -9,14 +9,14 @@ export class Customer {
   @prop({ required: true, unique: true })
   identification!: string;
 
-  @prop()
-  email?: string;
+  @prop({required: true})
+  email!: string;
 
-  @prop()
-  height?: number;
+  @prop({required: true})
+  height!: number;
 
-  @prop()
-  age?: number;
+  @prop({required: true})
+  age!: number;
 
   @prop()
   contact?: string;
