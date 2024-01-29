@@ -24,7 +24,8 @@ export const registerCustomer: RequestHandler = asyncHandler(
     );
     if (existingCustomer != null) {
       // aldready registered: increment customer visits field
-      const updatedCustomer = await incrementCustomerVisits(existingCustomer);
+      const updatedCustomer =
+        await customerService.incrementCustomerVisits(existingCustomer);
       res.json(updatedCustomer);
       return;
     }
@@ -35,19 +36,6 @@ export const registerCustomer: RequestHandler = asyncHandler(
     res.json(newCustomer);
   }
 );
-
-async function incrementCustomerVisits(
-  existingCustomer: Customer
-): Promise<Customer | null> {
-  const updatedCustomer = await customerService.updateCustomerById(
-    existingCustomer._id.toString(),
-    {
-      visits: existingCustomer.visits + 1,
-    }
-  );
-  console.log("Customer updated, welcome back :)", updatedCustomer);
-  return updatedCustomer;
-}
 
 export const deleteCustomer: RequestHandler = asyncHandler(async (req, res) => {
   const id = req.params.id;

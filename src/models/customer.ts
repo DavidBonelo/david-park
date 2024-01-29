@@ -1,10 +1,8 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
-import { Types } from "mongoose";
+import { type Base } from "@typegoose/typegoose/lib/defaultClasses";
 
+export interface Customer extends Base {} // hack to tel TS the "Base" types
 export class Customer {
-  @prop({ default: Types.ObjectId })
-  _id!: Types.ObjectId;
-
   @prop({ required: true })
   name!: string;
 

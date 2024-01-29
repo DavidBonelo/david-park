@@ -21,3 +21,16 @@ export const updateCustomerById = async (
   values: Record<string, any>
 ): Promise<Customer | null> =>
   await CustomerModel.findByIdAndUpdate(id, values, { new: true });
+
+export const incrementCustomerVisits = async (
+  existingCustomer: Customer
+): Promise<Customer | null> => {
+  const updatedCustomer = await updateCustomerById(
+    existingCustomer._id.toString(),
+    {
+      visits: existingCustomer.visits + 1,
+    }
+  );
+  console.log("Customer updated, welcome back :)", updatedCustomer);
+  return updatedCustomer;
+};
