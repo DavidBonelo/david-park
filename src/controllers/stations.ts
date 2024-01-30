@@ -3,6 +3,10 @@ import { asyncHandler } from "../utils";
 import * as stationsService from "../services/stations";
 import * as customersService from "../services/customers";
 
+export const getAllStations: RequestHandler = asyncHandler(async (_req, res) => {
+  res.json(stationsService.getAllStations());
+});
+
 export const buyCredits: RequestHandler = asyncHandler(async (req, res) => {
   const amountToBuy = Number(req.body.amount);
   const stationName = req.params.name;
@@ -14,10 +18,10 @@ export const buyCredits: RequestHandler = asyncHandler(async (req, res) => {
   }
   const station = stationsService.getStationByName(stationName);
   if (station === undefined) {
-    res.status(404).send(`Station ${stationName} not found`);
+    res.status(404).send(`Station: ${stationName} not found`);
     return;
   } else if (!station.open || station.employee === undefined) {
-    res.status(400).send(`Station ${stationName} isn't ready`);
+    res.status(400).send(`Station: ${stationName} isn't ready`);
     return;
   }
   const customer = await customersService.getCustomerByIdentification(
@@ -30,5 +34,13 @@ export const buyCredits: RequestHandler = asyncHandler(async (req, res) => {
 
   const credits = customer.credits;
   await station.employee.sellCredits(customer, amountToBuy);
-  res.json({ oldCredits: credits, newCredits: customer.credits, customer });
+  res.json({
+    receipt: {
+      oldCredits: credits,
+      newCredits: customer.credits,
+      soldAt: station.name,
+      soldBy: station.employee,
+      customer,
+    },
+  });
 });

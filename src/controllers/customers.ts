@@ -1,4 +1,3 @@
-import type express from "express";
 import { type RequestHandler } from "express";
 import { asyncHandler } from "../utils";
 import * as customerService from "../services/customers";
@@ -7,7 +6,7 @@ import { Park } from "../models/park";
 const park = Park.getInstance();
 
 export const getAllCustomers: RequestHandler = asyncHandler(
-  async (_req: express.Request, res: express.Response) => {
+  async (_req, res) => {
     const customers = await customerService.getAllCustomers();
     res.json(customers);
   }
@@ -35,7 +34,7 @@ export const registerCustomer: RequestHandler = asyncHandler(
       res.json(newCustomer);
     }
     // update Park visitors
-    park.addVisitor();
+    void park.addVisitor();
   }
 );
 
