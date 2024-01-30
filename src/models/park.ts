@@ -45,20 +45,21 @@ export class Park {
     }
     const admin = await staffService.getFreeAdminStaff();
     const logistic = await staffService.getFreeLogisticStaff();
-    if (admin != null && logistic != null)
+    if (admin != null && logistic != null) {
       await admin.openStation(station, logistic);
+      console.log(`Station ${station.name} opened by ${admin.name}`);
+    }
   }
 
   async addVisitor(): Promise<void> {
     if (this._visitors >= this.maxVisitors) {
       throw new Error("Park is full");
     }
+    this._visitors++;
 
     if (this.getRequiredStations() > this.getOpenStations()) {
       await this.openStation();
     }
-
-    this._visitors++;
     console.table({ visitors: this._visitors });
   }
 
