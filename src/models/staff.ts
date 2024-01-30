@@ -29,7 +29,7 @@ export class AdminStaff extends Staff {
   }
 
   closeStation(station: Station): void {
-    void station.closeStation();
+    station.closeStation();
   }
 }
 const AdminModel = getModelForClass(AdminStaff);

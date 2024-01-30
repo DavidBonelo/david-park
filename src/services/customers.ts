@@ -1,3 +1,4 @@
+import { type DocumentType } from "@typegoose/typegoose";
 import { type Customer, CustomerModel } from "../models/customer";
 
 export const getAllCustomers = async (): Promise<Customer[]> =>
@@ -5,7 +6,8 @@ export const getAllCustomers = async (): Promise<Customer[]> =>
 // export const getCustomerById = (id: string) => CustomerModel.findById(id);
 export const getCustomerByIdentification = async (
   identification: any
-): Promise<Customer | null> => await CustomerModel.findOne({ identification });
+): Promise<DocumentType<Customer> | null> =>
+  await CustomerModel.findOne({ identification });
 
 export const createCustomer = async (
   values: Record<string, any>
