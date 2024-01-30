@@ -1,12 +1,13 @@
 import { type Attraction } from "./attraction";
 import { type LogisticStaff } from "./staff";
 import * as attractionsService from "../services/attractions";
+import { type DocumentType } from "@typegoose/typegoose";
 
 export class Station {
   name: string;
   private _open: boolean = false;
   attractions?: Attraction[];
-  employee?: LogisticStaff;
+  employee?: DocumentType<LogisticStaff>;
 
   public static initialStations = [
     "central",
@@ -24,15 +25,20 @@ export class Station {
     return this._open;
   }
 
-  openStation(): void {
-    if (this.employee === undefined) {
-      throw new Error(`Can't open station ${this.name}: No employee assigned`);
-    }
+  async openStation(employee: DocumentType<LogisticStaff>): Promise<void> {
+    employee.available = false;
+    this.employee = employee;
+    await employee.save();
     this._open = true;
     void this.updateAttractions();
   }
 
   closeStation(): void {
+    if (this.employee !== undefined) {
+      this.employee.available = true;
+      void this.employee.save();
+    }
+    this.employee = undefined;
     this._open = false;
   }
 

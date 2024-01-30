@@ -1,4 +1,8 @@
-import { getModelForClass, prop } from "@typegoose/typegoose";
+import {
+  type DocumentType,
+  getModelForClass,
+  prop,
+} from "@typegoose/typegoose";
 import { type Base } from "@typegoose/typegoose/lib/defaultClasses";
 import { type Station } from "./station";
 import { type Customer } from "./customer";
@@ -17,12 +21,15 @@ export abstract class Staff {
 }
 
 export class AdminStaff extends Staff {
-  openStation(station: Station): void {
-    station.open = true;
+  async openStation(
+    station: Station,
+    employee: DocumentType<LogisticStaff>
+  ): Promise<void> {
+    await station.openStation(employee);
   }
 
   closeStation(station: Station): void {
-    station.open = false;
+    void station.closeStation();
   }
 }
 const AdminModel = getModelForClass(AdminStaff);
