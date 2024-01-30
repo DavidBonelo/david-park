@@ -1,3 +1,4 @@
+import * as staffService from "../services/staff";
 import { Station } from "./station";
 
 export class Park {
@@ -32,14 +33,31 @@ export class Park {
     return this.stations.reduce((prev, cur) => (cur.open ? prev + 1 : prev), 0);
   }
 
-  addVisitor(): void {
+  getClosedStation(): Station | undefined {
+    return this.stations.find((station) => !station.open);
+  }
+
+  async openStation(): Promise<void> {
+    const station = this.getClosedStation();
+    if (station === undefined) {
+      console.warn("No more stations to open");
+      return;
+    }
+    const admin = await staffService.getFreeAdminStaff();
+    const logistic = await staffService.getFreeLogisticStaff();
+    if (admin != null && logistic != null)
+      await admin.openStation(station, logistic);
+  }
+
+  async addVisitor(): Promise<void> {
     if (this._visitors >= this.maxVisitors) {
       throw new Error("Park is full");
     }
 
     if (this.getRequiredStations() > this.getOpenStations()) {
-      // call to open a new Station
+      await this.openStation();
     }
+
     this._visitors++;
     console.table({ visitors: this._visitors });
   }
