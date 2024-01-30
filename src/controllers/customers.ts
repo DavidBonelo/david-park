@@ -53,3 +53,8 @@ export const deleteCustomer: RequestHandler = asyncHandler(async (req, res) => {
   console.log({ deletedCustomer });
   res.json(deletedCustomer);
 });
+
+export const customerLeft: RequestHandler = (req, res): void => {
+  park.removeVisitor();
+  res.send("Goodbye!");
+};
