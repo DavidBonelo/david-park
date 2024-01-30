@@ -12,13 +12,7 @@ export class Park {
   stations: Station[];
 
   private constructor() {
-    this.stations = [
-      new Station("central", true),
-      new Station("east", false),
-      new Station("west", false),
-      new Station("north", false),
-      new Station("south", false),
-    ];
+    this.stations = Station.initialStations;
   }
 
   public static getInstance(): Park {
