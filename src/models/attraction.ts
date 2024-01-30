@@ -1,4 +1,9 @@
-import { Ref, getModelForClass, prop } from "@typegoose/typegoose";
+import {
+  type DocumentType,
+  Ref,
+  getModelForClass,
+  prop,
+} from "@typegoose/typegoose";
 import { OperatorStaff } from "./staff";
 
 enum Classification {
@@ -31,6 +36,24 @@ export class Attraction {
 
   @prop({ default: 0 })
   daysSinceLastMaintenance!: number;
+
+  public async disableAndSave(this: DocumentType<Attraction>): Promise<void> {
+    this.available = false;
+    await this.save();
+  }
+
+  public async enableAndSave(this: DocumentType<Attraction>): Promise<void> {
+    this.daysSinceLastMaintenance = 0;
+    this.available = true;
+    await this.save();
+  }
+
+  public async increaseVisitorsAndSave(
+    this: DocumentType<Attraction>
+  ): Promise<void> {
+    this.visitors++;
+    await this.save();
+  }
 }
 
 export const AttractionModel = getModelForClass(Attraction);
