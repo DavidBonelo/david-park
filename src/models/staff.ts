@@ -35,8 +35,12 @@ export class AdminStaff extends Staff {
 const AdminModel = getModelForClass(AdminStaff);
 
 export class LogisticStaff extends Staff {
-  sellTicket(customer: Customer, amount: number): void {
+  async sellCredits(
+    customer: DocumentType<Customer>,
+    amount: number
+  ): Promise<void> {
     customer.credits += amount;
+    await customer.save();
   }
 }
 const LogisticModel = getModelForClass(LogisticStaff);
