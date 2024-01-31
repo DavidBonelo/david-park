@@ -38,6 +38,5 @@ export const incrementCustomerVisits = async (
       visits: existingCustomer.visits + 1,
     }
   );
-  console.log("Customer updated, welcome back :)", updatedCustomer);
   return updatedCustomer;
 };
