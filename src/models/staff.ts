@@ -51,12 +51,12 @@ export class LogisticStaff extends Staff {
 const LogisticModel = getModelForClass(LogisticStaff);
 
 export class MarketingStaff extends Staff {
-  sendPromotion(customers: Customer[]): void {
-    customers.forEach((customer) => {
-      if (customer.visits > 3) {
-        console.log("Sending email to " + customer.email + " with promotion");
-      }
-    });
+  async sendPromotion(customers: Array<DocumentType<Customer>>): Promise<void> {
+    for (const customer of customers) {
+      console.log("Sending email to " + customer.email + " with promotion");
+      customer.promotionsSent++;
+      await customer.save();
+    }
   }
 }
 const MarketingModel = getModelForClass(MarketingStaff);
