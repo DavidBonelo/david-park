@@ -1,6 +1,9 @@
 import { type DocumentType } from "@typegoose/typegoose";
 import { type Attraction, AttractionModel } from "../models/attraction";
 import { type Customer } from "../models/customer";
+import { type OperatorStaff } from "../models/staff";
+import { BadRequestError } from "../utils/errors";
+import { startSession } from "mongoose";
 
 export const getAllAttractions = async (): Promise<Attraction[]> =>
   await AttractionModel.find({});
@@ -20,3 +23,33 @@ export const rideAttraction = async (
   customer.credits -= attraction.price;
   await customer.save();
 };
+
+export async function updateAttractionOperator(
+  attraction: DocumentType<Attraction>,
+  operator: DocumentType<OperatorStaff>
+): Promise<void> {
+  const session = await startSession();
+  session.startTransaction();
+  try {
+    if (!operator.available) {
+      throw new BadRequestError("Operator is not available");
+    }
+    if (attraction.operator !== undefined) {
+      const oldOperator = attraction.operator as DocumentType<OperatorStaff>;
+      oldOperator.available = true;
+      await oldOperator.save({ session });
+    }
+    operator.available = false;
+    await operator.save({ session });
+    attraction.operator = operator;
+    await attraction.save({ session });
+
+    await session.commitTransaction();
+    
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+}

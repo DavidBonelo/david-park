@@ -3,7 +3,9 @@ import {
   AdminModel,
   type LogisticStaff,
   type AdminStaff,
+  type OperatorStaff,
   LogisticModel,
+  OperatorModel,
 } from "../models/staff";
 
 export const getFreeAdminStaff =
@@ -12,3 +14,9 @@ export const getFreeAdminStaff =
 export const getFreeLogisticStaff =
   async (): Promise<DocumentType<LogisticStaff> | null> =>
     await LogisticModel.findOne({ available: true });
+
+export async function getOperatorById(
+  id: string
+): Promise<DocumentType<OperatorStaff> | null> {
+  return await OperatorModel.findById(id);
+}
