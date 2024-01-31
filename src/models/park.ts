@@ -33,6 +33,10 @@ export class Park {
     return this.stations.reduce((prev, cur) => (cur.open ? prev + 1 : prev), 0);
   }
 
+  getOpenStation(): Station | undefined {
+    return this.stations.find((station) => station.open);
+  }
+
   getClosedStation(): Station | undefined {
     return this.stations.find((station) => !station.open);
   }
@@ -51,6 +55,19 @@ export class Park {
     }
   }
 
+  async closeStation(): Promise<void> {
+    const station = this.getOpenStation();
+    if (station === undefined) {
+      console.warn("No more stations to close");
+      return;
+    }
+    const admin = await staffService.getFreeAdminStaff();
+    if (admin != null) {
+      await admin.closeStation(station);
+      console.log(`Station ${station.name} closed`);
+    }
+  }
+
   async addVisitor(): Promise<void> {
     if (this._visitors >= this.maxVisitors) {
       throw new Error("Park is full");
@@ -65,7 +82,10 @@ export class Park {
 
   removeVisitor(): void {
     if (this.getRequiredStations() < this.getOpenStations()) {
-      // call to close an open Station
+      void this.closeStation();
+    }
+    if (this._visitors <= 0) {
+      console.warn("No visitors to remove");
     }
     this._visitors--;
   }

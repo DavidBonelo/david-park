@@ -25,11 +25,15 @@ export class AdminStaff extends Staff {
     station: Station,
     employee: DocumentType<LogisticStaff>
   ): Promise<void> {
+    this.available = false;
     await station.openStation(employee);
+    this.available = true;
   }
 
-  closeStation(station: Station): void {
-    station.closeStation();
+  async closeStation(station: Station): Promise<void> {
+    this.available = false;
+    await station.closeStation();
+    this.available = true;
   }
 }
 const AdminModel = getModelForClass(AdminStaff);

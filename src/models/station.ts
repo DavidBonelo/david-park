@@ -33,10 +33,10 @@ export class Station {
     void this.updateAttractions();
   }
 
-  closeStation(): void {
+  async closeStation(): Promise<void> {
     if (this.employee !== undefined) {
       this.employee.available = true;
-      void this.employee.save();
+      await this.employee.save();
     }
     this.employee = undefined;
     this._open = false;
