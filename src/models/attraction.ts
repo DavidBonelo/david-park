@@ -5,6 +5,7 @@ import {
   prop,
 } from "@typegoose/typegoose";
 import { OperatorStaff } from "./staff";
+import { removeAttractionOperator } from "../services/attractions";
 
 enum Classification {
   Extreme = "Extreme",
@@ -42,6 +43,7 @@ export class Attraction {
 
   public async disableAndSave(this: DocumentType<Attraction>): Promise<void> {
     this.available = false;
+    await removeAttractionOperator(this);
     await this.save();
   }
 

@@ -78,7 +78,7 @@ export class OperatorStaff extends Staff {
 }
 const OperatorModel = getModelForClass(OperatorStaff);
 
-export class ManteinanceStaff extends Staff {
+export class MaintenanceStaff extends Staff {
   async inspectAttraction(
     attraction: DocumentType<Attraction>
   ): Promise<string> {
@@ -97,12 +97,12 @@ export class ManteinanceStaff extends Staff {
   }
 
 }
-const ManteinanceModel = getModelForClass(ManteinanceStaff);
+const MaintenanceModel = getModelForClass(MaintenanceStaff);
 
 export {
   AdminModel,
   LogisticModel,
   MarketingModel,
   OperatorModel,
-  ManteinanceModel,
+  MaintenanceModel,
 };

@@ -6,7 +6,7 @@ import { BadRequestError } from "../utils/errors";
 import { startSession } from "mongoose";
 
 export const getAllAttractions = async (): Promise<Attraction[]> =>
-  await AttractionModel.find({});
+  await AttractionModel.find({}).populate("operator");
 
 export const getAttractionById = async (
   attractionId: string
@@ -45,11 +45,22 @@ export async function updateAttractionOperator(
     await attraction.save({ session });
 
     await session.commitTransaction();
-    
   } catch (error) {
     await session.abortTransaction();
     throw error;
   } finally {
     await session.endSession();
+  }
+}
+
+export async function removeAttractionOperator(
+  attraction: DocumentType<Attraction>
+): Promise<void> {
+  if (attraction.operator !== undefined) {
+    const operator = attraction.operator as DocumentType<OperatorStaff>;
+    operator.available = true;
+    await operator.save();
+    attraction.operator = undefined;
+    await attraction.save();
   }
 }
