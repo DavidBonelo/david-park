@@ -34,8 +34,11 @@ export class Attraction {
   @prop({ default: 0 })
   visitors!: number;
 
+  @prop({ required: true })
+  usagesForMaintenance!: number;
+
   @prop({ default: 0 })
-  daysSinceLastMaintenance!: number;
+  usagesSinceLastMaintenance!: number;
 
   public async disableAndSave(this: DocumentType<Attraction>): Promise<void> {
     this.available = false;
@@ -43,7 +46,7 @@ export class Attraction {
   }
 
   public async enableAndSave(this: DocumentType<Attraction>): Promise<void> {
-    this.daysSinceLastMaintenance = 0;
+    this.usagesSinceLastMaintenance = 0;
     this.available = true;
     await this.save();
   }

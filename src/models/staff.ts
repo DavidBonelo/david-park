@@ -72,15 +72,23 @@ export class OperatorStaff extends Staff {
 const OperatorModel = getModelForClass(OperatorStaff);
 
 export class ManteinanceStaff extends Staff {
-  inspectAttraction(attraction: Attraction): void {
-    if (attraction.daysSinceLastMaintenance > 30) {
-      attraction.available = false;
+  async inspectAttraction(
+    attraction: DocumentType<Attraction>
+  ): Promise<string> {
+    const needsMaintenance =
+      attraction.usagesSinceLastMaintenance > attraction.usagesForMaintenance;
+
+    if (needsMaintenance) {
+      await attraction.disableAndSave();
+      return "Attraction disabled";
     }
+    return "Attraction is working properly";
   }
 
-  fixAttraction(attraction: Attraction): void {
-    attraction.available = true;
+  async fixAttraction(attraction: DocumentType<Attraction>): Promise<void> {
+    await attraction.enableAndSave();
   }
+
 }
 const ManteinanceModel = getModelForClass(ManteinanceStaff);
 
