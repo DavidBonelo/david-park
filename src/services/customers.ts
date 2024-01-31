@@ -40,3 +40,11 @@ export const incrementCustomerVisits = async (
   );
   return updatedCustomer;
 };
+
+export async function getMarketableCustomers(
+  visits: number
+): Promise<Array<DocumentType<Customer>>> {
+  return await CustomerModel.find({ visits: { $gte: visits } }).sort({
+    visits: "descending",
+  });
+}

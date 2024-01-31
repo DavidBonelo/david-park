@@ -12,6 +12,16 @@ export const getAllCustomers: RequestHandler = asyncHandler(
   }
 );
 
+export const getMarketableCustomers: RequestHandler = asyncHandler(
+  async (req, res) => {
+    let greaterThan = Number(req.params.greaterThan ?? 3);
+    if (isNaN(greaterThan)) greaterThan = 0;
+
+    const customers = await customerService.getMarketableCustomers(greaterThan);
+    res.json({ customers });
+  }
+);
+
 export const registerCustomer: RequestHandler = asyncHandler(
   async (req, res) => {
     const customerData = req.body as Record<string, any>;
