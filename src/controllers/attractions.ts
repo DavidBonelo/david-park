@@ -87,6 +87,7 @@ export const rideAttraction: RequestHandler = asyncHandler(async (req, res) => {
   const previousCredits = customer.credits;
   await attractionsService.rideAttraction(attraction, customer);
   res.json({
+    canRide,
     message: "Ride successful",
     operatedBy: attraction.operator,
     attraction: attraction.name,

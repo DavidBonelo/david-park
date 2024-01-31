@@ -92,10 +92,10 @@ export class MaintenanceStaff extends Staff {
     return "Attraction is working properly";
   }
 
-  async fixAttraction(attraction: DocumentType<Attraction>): Promise<void> {
+  async fixAttraction(attraction: DocumentType<Attraction>): Promise<string> {
     await attraction.enableAndSave();
+    return "Attraction fixed";
   }
-
 }
 const MaintenanceModel = getModelForClass(MaintenanceStaff);
 
