@@ -7,6 +7,7 @@ import { type Base } from "@typegoose/typegoose/lib/defaultClasses";
 import { type Station } from "./station";
 import { type Customer } from "./customer";
 import { type Attraction } from "./attraction";
+import { BadRequestError, NotAllowedError } from "../utils/errors";
 
 export interface Staff extends Base {}
 export abstract class Staff {
@@ -62,15 +63,17 @@ const MarketingModel = getModelForClass(MarketingStaff);
 
 export class OperatorStaff extends Staff {
   customerCanRide(customer: Customer, attraction: Attraction): boolean {
-    if (!attraction.available) return false;
+    if (!attraction.available) {
+      throw new BadRequestError("Attraction is not available");
+    }
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (attraction.minHeight && customer.height >= attraction.minHeight) {
-      return true;
+      throw new NotAllowedError("Customer is too short");
     }
-    if (attraction.price >= customer.credits) {
-      return true;
+    if (attraction.price > customer.credits) {
+      throw new NotAllowedError("Customer doesn't have enough credits");
     }
-    return false;
+    return true;
   }
 }
 const OperatorModel = getModelForClass(OperatorStaff);
