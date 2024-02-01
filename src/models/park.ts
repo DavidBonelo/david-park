@@ -81,12 +81,12 @@ export class Park {
   }
 
   removeVisitor(): void {
-    if (this.getRequiredStations() < this.getOpenStations()) {
-      void this.closeStation();
-    }
     if (this._visitors <= 0) {
       console.warn("No visitors to remove");
     }
     this._visitors--;
+    if (this.getRequiredStations() < this.getOpenStations()) {
+      void this.closeStation();
+    }
   }
 }
