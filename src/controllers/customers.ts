@@ -5,6 +5,10 @@ import { Park } from "../models/park";
 
 const park = Park.getInstance();
 
+export const getCustomersInPark: RequestHandler = (_req, res) => {
+  res.json({ visitors: park.visitors });
+};
+
 export const getAllCustomers: RequestHandler = asyncHandler(
   async (_req, res) => {
     const customers = await customerService.getAllCustomers();
