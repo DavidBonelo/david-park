@@ -67,7 +67,7 @@ export class OperatorStaff extends Staff {
       throw new BadRequestError("Attraction is not available");
     }
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (attraction.minHeight && customer.height >= attraction.minHeight) {
+    if (attraction.minHeight && customer.height < attraction.minHeight) {
       throw new NotAllowedError("Customer is too short");
     }
     if (attraction.price > customer.credits) {

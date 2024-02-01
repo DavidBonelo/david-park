@@ -8,6 +8,10 @@ import { startSession } from "mongoose";
 export const getAllAttractions = async (): Promise<Attraction[]> =>
   await AttractionModel.find({}).populate("operator");
 
+export const getAllAttractionsSorted = async (): Promise<
+  Array<DocumentType<Attraction>>
+> => await AttractionModel.find({}).sort({ visitors: "descending" });
+
 export const getAttractionById = async (
   attractionId: string
 ): Promise<DocumentType<Attraction> | null> =>

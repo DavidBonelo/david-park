@@ -12,6 +12,13 @@ export const getAllAttractions: RequestHandler = asyncHandler(
   }
 );
 
+export const getAllAtractionsSorted: RequestHandler = asyncHandler(
+  async (_req, res) => {
+    const attractions = await attractionsService.getAllAttractionsSorted();
+    res.json(attractions);
+  }
+);
+
 export const updateAttractionOperator: RequestHandler = asyncHandler(
   async (req, res, _next) => {
     const attractionId = req.params.id;
