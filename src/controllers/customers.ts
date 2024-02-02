@@ -26,6 +26,33 @@ export const getMarketableCustomers: RequestHandler = asyncHandler(
   }
 );
 
+export const sendEmails: RequestHandler = asyncHandler(async (req, res) => {
+  const customersData = req.body.customers as Array<Record<string, any>>;
+  const message = req.body.message;
+  if (customersData === undefined || customersData.length === 0) {
+    throw new Error("List of customers is required");
+  }
+  if (message === undefined || typeof message !== "string") {
+    throw new Error("Message is missing or invalid");
+  }
+
+  const notFound = [];
+
+  for (const customerData of customersData) {
+    if (typeof customerData.id !== "string") {
+      notFound.push(customerData);
+      continue;
+    }
+    const customer = await customerService.getCustomerById(customerData.id);
+    if (customer === null) {
+      notFound.push(customerData);
+      continue;
+    }
+    await customerService.sendEmail(customer, message);
+  }
+  res.json({ message: "Emails sent", notFound });
+});
+
 export const registerCustomer: RequestHandler = asyncHandler(
   async (req, res) => {
     const customerData = req.body as Record<string, any>;

@@ -3,7 +3,11 @@ import { type Customer, CustomerModel } from "../models/customer";
 
 export const getAllCustomers = async (): Promise<Customer[]> =>
   await CustomerModel.find();
-// export const getCustomerById = (id: string) => CustomerModel.findById(id);
+
+export const getCustomerById = async (
+  id: string
+): Promise<DocumentType<Customer> | null> => await CustomerModel.findById(id);
+
 export const getCustomerByIdentification = async (
   identification: any
 ): Promise<DocumentType<Customer> | null> =>
@@ -47,4 +51,13 @@ export async function getMarketableCustomers(
   return await CustomerModel.find({ visits: { $gte: visits } }).sort({
     visits: "descending",
   });
+}
+
+export async function sendEmail(
+  customer: DocumentType<Customer>,
+  message: string
+): Promise<void> {
+  customer.promotionsSent++;
+  await customer.save();
+  console.log(`Email sent`, { to: customer.email, message });
 }

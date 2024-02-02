@@ -6,6 +6,7 @@ import {
   customerLeft,
   getMarketableCustomers,
   getCustomersInPark,
+  sendEmails,
 } from "../controllers/customers";
 
 export default (router: express.Router): void => {
@@ -13,6 +14,7 @@ export default (router: express.Router): void => {
   router.get("/customers", getAllCustomers);
   router.get("/customers/now", getCustomersInPark);
   router.get("/customers/marketable/:greaterThan", getMarketableCustomers);
+  router.post("/customers/sendEmails", sendEmails);
   router.delete("/customers/:id/delete", deleteCustomer);
   router.post("/exit", customerLeft);
 };
