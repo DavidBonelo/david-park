@@ -4,6 +4,8 @@ import * as attractionsService from "../services/attractions";
 import { getCustomerByIdentification } from "../services/customers";
 import { type OperatorStaff } from "../models/staff";
 import { getOperatorById } from "../services/staff";
+import { isValidObjectId } from "mongoose";
+import { BadRequestError, NotAllowedError, NotFoundError } from "../utils/errors";
 
 export const getAllAttractions: RequestHandler = asyncHandler(
   async (_req, res) => {
@@ -24,25 +26,21 @@ export const updateAttractionOperator: RequestHandler = asyncHandler(
     const attractionId = req.params.id;
     const operatorId = req.body.operator?.id as string;
 
-    if (attractionId === undefined) {
-      res.status(400).send("Missing attraction id");
-      return;
+    if (!isValidObjectId(attractionId)) {
+      throw new BadRequestError("Missing or invalid attraction id");
     }
-    if (operatorId === undefined) {
-      res.status(400).send("Missing operator id");
-      return;
+    if (!isValidObjectId(operatorId)) {
+      throw new BadRequestError("Missing or invalid operator id");
     }
 
     const attraction = await attractionsService.getAttractionById(attractionId);
     if (attraction === null) {
-      res.status(404).send(`Attraction not found`);
-      return;
+      throw new NotFoundError(`Attraction not found`);
     }
 
     const operator = await getOperatorById(operatorId);
     if (operator === null) {
-      res.status(404).send(`Operator not found`);
-      return;
+      throw new NotFoundError(`Operator not found`);
     }
 
     const oldOperator = attraction.operator;
@@ -55,40 +53,34 @@ export const rideAttraction: RequestHandler = asyncHandler(async (req, res) => {
   const attractionId = req.params.id;
   const customerData = req.body.customer as Record<string, any>;
 
-  if (attractionId === undefined) {
-    res.status(400).send("Missing attraction id");
-    return;
+  if (!isValidObjectId(attractionId)) {
+    throw new BadRequestError("Missing or ivalid attraction id");
   }
   if (customerData?.identification === undefined) {
-    res.status(400).send("Missing identification data");
-    return;
+    throw new BadRequestError("Missing identification data");
   }
 
   const attraction = await attractionsService.getAttractionById(attractionId);
   if (attraction === null) {
-    res.status(404).send(`Attraction not found`);
-    return;
+    throw new NotFoundError(`Attraction not found`);
   }
 
   if (attraction.operator === undefined || !attraction.available) {
-    res.status(400).send(`Attraction: ${attraction.name} isn't ready`);
-    return;
+    throw new BadRequestError(`Attraction: ${attraction.name} isn't ready`);
   }
 
   const customer = await getCustomerByIdentification(
     customerData.identification
   );
   if (customer === null) {
-    res.status(404).send(`Customer not found`);
-    return;
+    throw new NotFoundError(`Customer not found`);
   }
   const canRide = (attraction.operator as OperatorStaff).customerCanRide(
     customer,
     attraction
   );
   if (!canRide) {
-    res.status(400).send(`Customer can't ride`);
-    return;
+    throw new NotAllowedError(`Customer can't ride`);
   }
 
   const previousCredits = customer.credits;
