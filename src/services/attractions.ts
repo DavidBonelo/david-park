@@ -2,8 +2,8 @@ import { type DocumentType } from "@typegoose/typegoose";
 import { type Attraction, AttractionModel } from "../models/attraction";
 import { type Customer } from "../models/customer";
 import { type OperatorStaff } from "../models/staff";
-import { BadRequestError } from "../utils/errors";
-import { startSession } from "mongoose";
+import { BadRequestError, NotFoundError } from "../utils/errors";
+import { isValidObjectId, startSession } from "mongoose";
 
 export const getAllAttractions = async (): Promise<Attraction[]> =>
   await AttractionModel.find({}).populate("operator");
@@ -14,8 +14,19 @@ export const getAllAttractionsSorted = async (): Promise<
 
 export const getAttractionById = async (
   attractionId: string
-): Promise<DocumentType<Attraction> | null> =>
-  await AttractionModel.findById(attractionId).populate("operator").exec();
+): Promise<DocumentType<Attraction>> => {
+  if (!isValidObjectId(attractionId)) {
+    throw new BadRequestError("Missing or invalid attraction id");
+  }
+  const attraction = await AttractionModel.findById(attractionId)
+    .populate("operator")
+    .exec();
+
+  if (attraction === null) {
+    throw new NotFoundError(`Attraction not found`);
+  }
+  return attraction;
+};
 
 export const rideAttraction = async (
   attraction: DocumentType<Attraction>,

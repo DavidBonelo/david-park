@@ -4,8 +4,10 @@ import * as attractionsService from "../services/attractions";
 import { getCustomerByIdentification } from "../services/customers";
 import { type OperatorStaff } from "../models/staff";
 import { getOperatorById } from "../services/staff";
-import { isValidObjectId } from "mongoose";
-import { BadRequestError, NotAllowedError, NotFoundError } from "../utils/errors";
+import {
+  BadRequestError,
+  NotAllowedError,
+} from "../utils/errors";
 
 export const getAllAttractions: RequestHandler = asyncHandler(
   async (_req, res) => {
@@ -26,22 +28,8 @@ export const updateAttractionOperator: RequestHandler = asyncHandler(
     const attractionId = req.params.id;
     const operatorId = req.body.operator?.id as string;
 
-    if (!isValidObjectId(attractionId)) {
-      throw new BadRequestError("Missing or invalid attraction id");
-    }
-    if (!isValidObjectId(operatorId)) {
-      throw new BadRequestError("Missing or invalid operator id");
-    }
-
     const attraction = await attractionsService.getAttractionById(attractionId);
-    if (attraction === null) {
-      throw new NotFoundError(`Attraction not found`);
-    }
-
     const operator = await getOperatorById(operatorId);
-    if (operator === null) {
-      throw new NotFoundError(`Operator not found`);
-    }
 
     const oldOperator = attraction.operator;
     await attractionsService.updateAttractionOperator(attraction, operator);
@@ -53,17 +41,7 @@ export const rideAttraction: RequestHandler = asyncHandler(async (req, res) => {
   const attractionId = req.params.id;
   const customerData = req.body.customer as Record<string, any>;
 
-  if (!isValidObjectId(attractionId)) {
-    throw new BadRequestError("Missing or ivalid attraction id");
-  }
-  if (customerData?.identification === undefined) {
-    throw new BadRequestError("Missing identification data");
-  }
-
   const attraction = await attractionsService.getAttractionById(attractionId);
-  if (attraction === null) {
-    throw new NotFoundError(`Attraction not found`);
-  }
 
   if (attraction.operator === undefined || !attraction.available) {
     throw new BadRequestError(`Attraction: ${attraction.name} isn't ready`);
@@ -72,9 +50,6 @@ export const rideAttraction: RequestHandler = asyncHandler(async (req, res) => {
   const customer = await getCustomerByIdentification(
     customerData.identification
   );
-  if (customer === null) {
-    throw new NotFoundError(`Customer not found`);
-  }
   const canRide = (attraction.operator as OperatorStaff).customerCanRide(
     customer,
     attraction
