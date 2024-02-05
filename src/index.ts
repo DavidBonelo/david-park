@@ -21,4 +21,4 @@ app.listen(PORT, () => {
 
 runDatabase().catch(console.dir);
 
-app.use("/", router());
+app.use("/api", router());
