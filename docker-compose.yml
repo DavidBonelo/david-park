@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    command: node dist/index.js
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - PORT=${PORT}
+    ports:
+      - "${PORT}:${PORT}"
