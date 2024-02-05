@@ -2,6 +2,8 @@ import { type RequestHandler } from "express";
 import { asyncHandler } from "../utils";
 import * as customerService from "../services/customers";
 import { Park } from "../models/park";
+import { BadRequestError, NotFoundError } from "../utils/errors";
+import { isValidObjectId } from "mongoose";
 
 const park = Park.getInstance();
 
@@ -30,20 +32,21 @@ export const sendEmails: RequestHandler = asyncHandler(async (req, res) => {
   const customersData = req.body.customers as Array<Record<string, any>>;
   const message = req.body.message;
   if (customersData === undefined || customersData.length === 0) {
-    throw new Error("List of customers is required");
+    throw new BadRequestError("List of customers is required");
   }
   if (message === undefined || typeof message !== "string") {
-    throw new Error("Message is missing or invalid");
+    throw new BadRequestError("Message is missing or invalid");
   }
 
   const notFound = [];
 
   for (const customerData of customersData) {
-    if (typeof customerData.id !== "string") {
+    const id = customerData.id as string;
+    if (!isValidObjectId(id)) {
       notFound.push(customerData);
       continue;
     }
-    const customer = await customerService.getCustomerById(customerData.id);
+    const customer = await customerService.getCustomerById(id);
     if (customer === null) {
       notFound.push(customerData);
       continue;
@@ -81,14 +84,14 @@ export const registerCustomer: RequestHandler = asyncHandler(
 
 export const deleteCustomer: RequestHandler = asyncHandler(async (req, res) => {
   const id = req.params.id;
+  if (!isValidObjectId(id)) {
+    throw new BadRequestError(`Invalid customer id: ${id}`);
+  }
 
-  console.log("Deleting customer", id);
   const deletedCustomer = await customerService.deleteCustomerById(id);
 
   if (deletedCustomer === null) {
-    console.log(`Customer ${id} not found`);
-    res.status(404);
-    return;
+    throw new NotFoundError(`Customer ${id} not found`);
   }
   console.log({ deletedCustomer });
   res.json(deletedCustomer);

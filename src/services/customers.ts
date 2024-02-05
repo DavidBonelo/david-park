@@ -1,5 +1,6 @@
 import { type DocumentType } from "@typegoose/typegoose";
 import { type Customer, CustomerModel } from "../models/customer";
+import { BadRequestError } from "../utils/errors";
 
 export const getAllCustomers = async (): Promise<Customer[]> =>
   await CustomerModel.find();
@@ -19,7 +20,11 @@ export const createCustomer = async (
   if (values.age < 18 && values.contact === undefined) {
     throw new Error("Contact is required for minors");
   }
-  return await CustomerModel.create(values);
+  try {
+    return await CustomerModel.create(values);
+  } catch (error) {
+    throw new BadRequestError((error as Error).message);
+  }
 };
 
 export const deleteCustomerById = async (
