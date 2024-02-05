@@ -39,6 +39,7 @@ export class Station {
       await this.employee.save();
     }
     this.employee = undefined;
+    this.attractions = undefined;
     this._open = false;
   }
 

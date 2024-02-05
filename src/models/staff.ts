@@ -83,7 +83,7 @@ export class MaintenanceStaff extends Staff {
     attraction: DocumentType<Attraction>
   ): Promise<string> {
     const needsMaintenance =
-      attraction.usagesSinceLastMaintenance > attraction.usagesForMaintenance;
+      attraction.usagesSinceLastMaintenance >= attraction.usagesForMaintenance;
 
     if (needsMaintenance) {
       await attraction.disableAndSave();

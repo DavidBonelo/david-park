@@ -91,9 +91,6 @@ export async function getMarketableCustomers(
 }
 
 export async function sendEmail(id: string, message: string): Promise<void> {
-  if (!isValidObjectId(id)) {
-    throw new BadRequestError("Invalid or missing customer id");
-  }
   if (message === undefined) {
     throw new BadRequestError("Message is missing or invalid");
   }
@@ -118,7 +115,7 @@ export async function sendEmails(
     try {
       await sendEmail(id, message);
     } catch (err) {
-      notFound.push({ id, reason: (err as Error).message });
+      notFound.push({ reason: (err as Error).message, customerData });
     }
   }
   return notFound;

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { runDatabase } from "./db";
 import router from "./routers";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -22,3 +23,4 @@ app.listen(PORT, () => {
 runDatabase().catch(console.dir);
 
 app.use("/api", router());
+app.use(express.static(path.join(__dirname, "public")));
